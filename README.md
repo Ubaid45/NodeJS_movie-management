@@ -55,4 +55,35 @@ try {
 ```javascript
 mongoose.Types.ObjectID.isValid(id); 
 ```
-- To validate ObjectIDs using **[Joi](https://www.npmjs.com/package/joi), use **[joi-objectid NPM package](https://www.npmjs.com/package/joi-objectid)**.
+- To validate ObjectIDs using **[Joi](https://www.npmjs.com/package/joi)**, use **[joi-objectid NPM package](https://www.npmjs.com/package/joi-objectid)**.
+# Authentication and Authorization
+- **Authentication** is the process of determining if the user is who he/she claims to be. It involves validating their email/password.
+- **Authorization** is the process of determining if the user has permission to perform a given operation.
+- To hash passwords, we can use **[bcrypt](https://www.npmjs.com/package/bcrypt)**:
+## Hashing passwords
+```javascript
+const salt = await bcrypt.genSalt(10);
+const hashed = await bcrypt.hash(‘1234’, salt);
+```
+## Validating passwords
+```javascript
+const isValid = await bcrypt.compare(‘1234’, hashed);
+```
+- A **[JSON Web Token (JWT)](https://jwt.io/)** is a JSON object encoded as a long string. We use them to identify users. It’s similar to a passport or driver’s license. It includes a few public properties about a user in its payload. These properties cannot be tampered because doing so requires re-generating the digital signature.
+- When the user logs in, we generate a **[JWT](https://jwt.io/)** on the server and return it to the client. We store this token on the client and send it to the server every time we need to call an API endpoint that is only accessible to authenticated users.
+- To generate JSON Web Tokens in an Express app use **[jsonwebtoken package](https://www.npmjs.com/package/jsonwebtoken)**.
+## Generating a **[JWT](https://jwt.io/)**
+```javascript
+const jwt = require(‘jsonwebtoken’);
+const token = jwt.sign({ _id: user._id}, ‘privateKey’);
+```
+- We should never store private keys and other secrets in our codebase. Store them in environment variables. Use the **[config package](https://www.npmjs.com/package/config)** to read application settings stored in environment variables. 
+- When appropriate, encapsulate logic in **[Mongoose](https://www.npmjs.com/package/mongoose)** models: 
+### Adding a method to a Mongoose model
+```javascript
+userSchema.methods.generateAuthToken = function() { } 
+const token = user.generateAuthToken();
+```
+- Implement authorization using a middleware function. Return a 401 error (unauthorized) if the client doesn’t send a valid token. Return 403 (forbidden) if the user provided a valid token but is not allowed to perform the given operation.
+- We don’t need to implement logging out on the server. Implement it on the client by simply removing the **[(JWT)](https://jwt.io/)** from the client. 
+- Do not store a **[(JWT)](https://jwt.io/)** in plain text in a database. This is similar to storing users’ passports or drivers license in a room. Anyone who has access to that room can steal these passports. Store **[(JWTs)](https://jwt.io/)** on the client. If we have a strong reason for storing them on the server, make sure to encrypt them before storing them in a database.
