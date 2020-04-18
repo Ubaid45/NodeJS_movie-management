@@ -16,20 +16,27 @@ const express = require('express');
 const app = express();
 
 
-process.on('uncaughtException', ex => {
+/*process.on('uncaughtException', ex => {
     console.log("WE GOT AN UNCAUGHT EXCEPTION.");
     winston.error(ex.message, ex);
-})
+});*/
+winston.handleExceptions(new winston.transports.File({ filename: 'UncaughtExceptions.log' }));
+
+process.on('unhandledRejection', ex => {
+    throw ex; // Will throw uncaguht exception which will be catch by winston.
+});
+
 winston.add(winston.transports.File, { filename: 'logfile.log' });
 winston.add(winston.transports.MongoDB, { db: 'mongodb://localhost/vidly' });
 
-throw new Error("Something went wrong");
+const p = Promise.reject(new Error("SOMETHING FAILED MISERABLY"));
+p.then(() => console.log("Done"));
 if (!config.get('jwtPrivateKey')) {
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
     process.exit(1);
 }
 
-mongoose.connect('mongodb://localhost/vidly')
+mongoose.connect('mongodb://localhost/vidly', { useUnifiedTopology: true, useNewUrlParser: true })
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.error('Could not connect to MongoDB...'));
 
