@@ -131,11 +131,11 @@ app.use(function (err, req, res, next) {
 });
 ```
 
-- To pass control to the error middleware, wrap our route handler code in a try/catch block and call **next()**.
-- Adding a try/catch block to every route handler is repetitive and time consuming. Use **[express-async-errors](https://www.npmjs.com/package/express-async-errors)** module. This module will monkey-patch our route handlers at runtime. It’ll wrap our code within a try/catch block and pass unhandled errors to our error middleware.
+- To pass control to the error middleware, we should wrap our route handler code in a try/catch block and call **next()**.
+- Adding a try/catch block to every route handler is repetitive and time consuming. We should use **[express-async-errors](https://www.npmjs.com/package/express-async-errors)** module. This module will monkey-patch our route handlers at runtime. It’ll wrap our code within a try/catch block and pass unhandled errors to our error middleware.
 - To log errors, we can use **[winston](https://www.npmjs.com/package/winston)**.
-- \*[Winston](https://www.npmjs.com/package/winston)\*\* can log errors in multiple transports. A transport is where our log is stored.
-- The core transports that come with \*[Winston](https://www.npmjs.com/package/winston)** are **Console, File** and **Http**. There are also 3rd-party transports for storing logs in **MongoDB, CouchDB, Redis** and **Loggly\*\*.
-- The error middleware in Express only catches exceptions in the request processing pipeline. Any errors happening during the application startup (eg connecting to MongoDB) will be invisible to Express.
+- **[Winston](https://www.npmjs.com/package/winston)** can log errors in multiple transports. A transport is where our log is stored.
+- The core transports that come with **[Winston](https://www.npmjs.com/package/winston)** are **Console, File** and **Http**. There are also 3rd-party transports for storing logs in **MongoDB, CouchDB, Redis** and **Loggly**.
+- The error middleware in Express only catches exceptions in the request processing pipeline. Any errors happening during the application startup (eg connecting to MongoDB) will be invisible to **Express**.
 - We can use **process.on(‘uncaughtException’)** to catch unhandled exceptions, and **process.on(‘unhandledRejection’)** to catch rejected promises.
 - As a best practice, in the event handlers we pass to **process.on()**, we should log the exception and exit the process, because our process may be in an unclean state and it may result in more issues in the future. It’s better to restart the process in a clean state. In production, we can use a process manager to automatically restart a Node process.
