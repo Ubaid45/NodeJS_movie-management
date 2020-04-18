@@ -25,6 +25,7 @@ router.post('/', async(req, res) => {
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
 
+    // Setting respose headers
     const token = user.generateAuthToken();
     res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 });
