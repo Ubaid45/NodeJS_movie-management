@@ -26,7 +26,7 @@ const course = await Course.findById(courseId);
 course.author.name = "New Name";
 course.save();
 ```
-- We don’t have transactions in MongoDB. To implement transactions, we use a pattern called **“Two Phase Commit”**. If you don’t want to manually implement this pattern, use the **[Fawn NPM package](https://www.npmjs.com/package/fawn)**:
+- We don’t have transactions in MongoDB. To implement transactions, we use a pattern called **“Two Phase Commit”**. If we don’t want to manually implement this pattern, use the **[Fawn NPM package](https://www.npmjs.com/package/fawn)**:
 ### Implementing transactions using Fawn
 ```javascript
 try {
@@ -55,4 +55,4 @@ try {
 ```javascript
 mongoose.Types.ObjectID.isValid(id); 
 ```
-- To validate ObjectIDs using joi, use **[joi-objectid NPM package](https://www.npmjs.com/package/joi-objectid)**.
+- To validate ObjectIDs using **[Joi](https://www.npmjs.com/package/joi), use **[joi-objectid NPM package](https://www.npmjs.com/package/joi-objectid)**.
