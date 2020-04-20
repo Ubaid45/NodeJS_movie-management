@@ -139,3 +139,77 @@ app.use(function (err, req, res, next) {
 - The error middleware in Express only catches exceptions in the request processing pipeline. Any errors happening during the application startup (eg connecting to MongoDB) will be invisible to **Express**.
 - We can use **process.on(‘uncaughtException’)** to catch unhandled exceptions, and **process.on(‘unhandledRejection’)** to catch rejected promises.
 - As a best practice, in the event handlers we pass to **process.on()**, we should log the exception and exit the process, because our process may be in an unclean state and it may result in more issues in the future. It’s better to restart the process in a clean state. In production, we can use a process manager to automatically restart a Node process.
+
+# Unit Testing
+
+- Automated testing is the practice of writing code to test our code.
+- Automated tests help us deliver software with fewer bugs and of better quality. They also help us refactor our code with confidence.
+- **[Jest](https://www.npmjs.com/package/jest)** is a new trending popular testing framework recommended by Facebook. It comes with everything you need to write automated tests.
+- We have 3 types of automated tests:
+  - **Unit tests**: test a unit of an application without external resources (eg db)
+  - **Integration tests**: test the application with external resources.
+  - **Functional or end-to-end tests**: test the application through its UI.
+- Tests should not be too general nor too specific. If they’re too general, they don’t give you much confidence that your code works. If they’re too specific, they become fragile and can break easily. As you write code, you have to spend extra unnecessary time to fix these broken tests.
+- Mocking is replacing a real implementation of a function with a fake or mock function. It allows us to isolate our application code from its external resources.
+- Popular Jest matcher functions:
+
+## Equality
+
+```javascript
+expect(...).toBe();
+expect(...).toEqual();
+```
+
+## Truthiness
+
+```javascript
+expect(...).toBeDefined();
+expect(...).toBeNull();
+expect(...).toBeTruthy();
+expect(...).toBeFalsy();
+```
+
+## Numbers
+
+```javascript
+expect(...).toBeGreaterThan();
+expect(...).toBeGreaterThanOrEqual();
+expect(...).toBeLessThan();
+expect(...).toBeLessThanOrEqual();
+```
+
+## Strings
+
+```javascript
+expect(...).toMatch(/regularExp/);
+```
+
+## Arrays
+
+```javascript
+expect(...).toContain();
+```
+
+## Objects
+
+```javascript
+expect(...).toBe(); // check for the equality of object references
+expect(...).toEqual(); // check for the equality of properties
+expect(...).toMatchObject();
+```
+
+## Exceptions
+
+```javascript
+expect(() => {
+  someCode;
+}).toThrow();
+```
+
+# Integration Tests
+
+- Unit tests are easy to write, fast to execute and are ideal for testing functions with minimal or zero dependency on external resources.
+- The more we use mock functions, the more our tests get coupled to the current implementation. If we change this implementation in the future, our tests will break. If we find ourself doing too much mocking, that’s when we need to replace our unit test with an integration test.
+- With integration tests, we test our application with a real database. As a best practice, separate our test database from the development or production databases.
+- We should write each integration test as if it is the only test in the world. Start with a clean state (database). Populate the database only with the data required by the test. Nothing more, nothing less. Clean up after our test using the **afterEach** function.
+- Run jest with **—coverage** flag to get a code coverage report.
