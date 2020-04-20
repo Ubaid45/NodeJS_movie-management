@@ -1,5 +1,5 @@
-/*const moment = require('moment');
-const request = require('supertest');*/
+//const moment = require('moment');
+const request = require('supertest');
 const { Rental } = require('../../models/rental');
 const { Movie } = require('../../models/movie');
 //const {User} = require('../../models/user');
@@ -40,8 +40,13 @@ describe('/api/returns', () => {
         //await Movie.remove({});
     });
 
-    it('should work', async() => {
-        const result = await Rental.findById(rental._id);
-        expect(result).not.toBeNull();
-    })
+    it('should return 401 if client is not logged in', async() => {
+        //token = '';
+
+        const res = await request(server)
+            .post('/api/returns')
+            .send({ customerId, movieId });;
+
+        expect(res.status).toBe(401);
+    });
 });
